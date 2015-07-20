@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!-- <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"> -->
+
+<xsd:schema xmlns="http://www.hxtx.com/schema/MiniContainer"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.hwtx.org/schema/components"
+	elementFormDefault="qualified" xmlns:Q1="http://www.hwtx.org/schema/components"
+	xmlns:Q2="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:element name="composite">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="component" minOccurs="0"
+					maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:choice minOccurs="0"
+							maxOccurs="unbounded">
+							<xsd:element name="property" minOccurs="0"
+								maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:choice>
+										<xsd:element name="map"
+											type="Q1:mapType" maxOccurs="1" minOccurs="0">
+										</xsd:element>
+										<xsd:element name="value"
+											type="xsd:string" maxOccurs="1" minOccurs="0">
+										</xsd:element>
+									</xsd:choice>
+									<xsd:attribute name="name"
+										type="xsd:string" />
+									<!-- <xsd:choice> -->
+									<xsd:attribute name="value"
+										type="xsd:string" use="optional" />
+									<xsd:attribute name="ref"
+										type="xsd:string" use="optional" />
+									<!-- </xsd:choice> -->
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:choice>
+						<xsd:attribute name="name" type="xsd:string" />
+						<xsd:attribute name="class" type="xsd:string" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="component-scan"
+					type="Q1:component-scanType" maxOccurs="unbounded" minOccurs="0">
+				</xsd:element>
+				<xsd:element name="property-placeholder"
+					type="Q1:property-placeholderType" maxOccurs="unbounded" minOccurs="0">
+				</xsd:element>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="mapType">
+		<xsd:sequence>
+			<xsd:element name="entry" type="Q1:entryType" maxOccurs="unbounded"
+				minOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="entryType">
+		<xsd:attribute name="key" type="xsd:string"></xsd:attribute>
+		<xsd:attribute name="value" type="xsd:string"></xsd:attribute>
+		<xsd:attribute name="value-ref" type="xsd:string"></xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="component-scanType">
+		<xsd:attribute name="base-package" type="xsd:string"></xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="property-placeholderType">
+		<xsd:attribute name="location" type="xsd:string"></xsd:attribute>
+	</xsd:complexType>
+</xsd:schema> 
