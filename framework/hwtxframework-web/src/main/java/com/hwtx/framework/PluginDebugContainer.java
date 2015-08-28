@@ -52,8 +52,7 @@ public class PluginDebugContainer {
                     FileUtils.forceDelete(target);
                 }
                 FileUtils.copyDirectory(new File(entry.getValue().getDevPath(), "plugin-classes"), new File(target, "classes"));
-                FileUtils.copyDirectory(new File(entry.getValue().getDevPath(), "plugin-classes" + File.separator + "page"),
-                        new File(target, "page"));
+                FileUtils.copyDirectory(new File(entry.getValue().getDevPath(), "plugin-classes" + File.separator + "page"), new File(target, "page"));
                 File source = new File(entry.getValue().getDevPath(), "lib");
                 if (source.exists()) {
                     FileUtils.copyDirectory(source, new File(target, "lib"));
@@ -72,8 +71,7 @@ public class PluginDebugContainer {
     }
 
     public void start() {
-        URL configFile = PluginDebugContainer.class.getClassLoader().getResource
-                ("config/debug-config.xml");
+        URL configFile = PluginDebugContainer.class.getClassLoader().getResource("config/debug-config.xml");
         if (configFile != null) {
             try {
                 HwTxDebugPluginConfig hwTxDebugConfig = JaxbKit.unmarshal(Paths.get(configFile.toURI())

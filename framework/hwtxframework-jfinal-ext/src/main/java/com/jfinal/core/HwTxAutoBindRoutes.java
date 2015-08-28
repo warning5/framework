@@ -5,7 +5,6 @@ import com.jfinal.ext.route.ControllerBind;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.log.Logger;
-import lombok.Getter;
 
 public class HwTxAutoBindRoutes extends Routes {
 
@@ -43,12 +42,15 @@ public class HwTxAutoBindRoutes extends Routes {
         }
     }
 
-    @Getter
     private String suffix = "Controller";
 
     public HwTxAutoBindRoutes suffix(String suffix) {
         this.suffix = suffix;
         return this;
+    }
+
+    public String getSuffix() {
+        return suffix;
     }
 
     @Override
