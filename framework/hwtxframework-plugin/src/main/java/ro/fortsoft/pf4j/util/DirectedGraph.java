@@ -1,11 +1,11 @@
 /*
  * Copyright 2012 Decebal Suiu
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with
  * the License. You may obtain a copy of the License in the LICENSE file, or at:
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
@@ -29,7 +29,7 @@ public class DirectedGraph<V> {
      * of an array of lists, a Map is used to map each vertex to its list of
      * adjacent vertices.
      */
-    private Map<V, List<V>> neighbors = new HashMap<V, List<V>>();
+    private Map<V, List<V>> neighbors = new HashMap<>();
 
     /**
      * Add a vertex to the graph. Nothing happens if vertex is already in graph.
@@ -69,11 +69,18 @@ public class DirectedGraph<V> {
         neighbors.get(from).remove(to);
     }
 
+    public List<V> getNeighbors(V vertex) {
+        if (neighbors.containsKey(vertex)) {
+        	return new ArrayList<V>();
+        }
+        return neighbors.get(vertex);
+    }
+
     /**
      * Report (as a Map) the out-degree of each vertex.
      */
     public Map<V, Integer> outDegree() {
-        Map<V, Integer> result = new HashMap<V, Integer>();
+        Map<V, Integer> result = new HashMap<>();
         for (V vertex : neighbors.keySet()) {
         	result.put(vertex, neighbors.get(vertex).size());
         }
@@ -85,7 +92,7 @@ public class DirectedGraph<V> {
      * Report (as a Map) the in-degree of each vertex.
      */
     public Map<V,Integer> inDegree() {
-        Map<V, Integer> result = new HashMap<V, Integer>();
+        Map<V, Integer> result = new HashMap<>();
         for (V vertex : neighbors.keySet()) {
         	result.put(vertex, 0); // all in-degrees are 0
         }
@@ -105,7 +112,7 @@ public class DirectedGraph<V> {
         Map<V, Integer> degree = inDegree();
 
         // determine all vertices with zero in-degree
-        Stack<V> zeroVertices = new Stack<V>(); // stack as good as any here
+        Stack<V> zeroVertices = new Stack<>(); // stack as good as any here
         for (V v : degree.keySet()) {
             if (degree.get(v) == 0) {
             	zeroVertices.push(v);
@@ -113,7 +120,7 @@ public class DirectedGraph<V> {
         }
 
         // determine the topological order
-        List<V> result = new ArrayList<V>();
+        List<V> result = new ArrayList<>();
         while (!zeroVertices.isEmpty()) {
             V vertex = zeroVertices.pop(); // choose a vertex with zero in-degree
             result.add(vertex); // vertex 'v' is next in topological order

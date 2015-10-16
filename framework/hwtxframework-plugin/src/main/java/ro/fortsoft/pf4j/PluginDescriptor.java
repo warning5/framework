@@ -12,6 +12,11 @@
  */
 package ro.fortsoft.pf4j;
 
+import com.github.zafarkhaja.semver.Parser;
+import com.github.zafarkhaja.semver.Version;
+import static com.github.zafarkhaja.semver.expr.CompositeExpression.Helper.gte;
+import com.github.zafarkhaja.semver.expr.Expression;
+import com.github.zafarkhaja.semver.expr.ExpressionParser;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,13 +33,13 @@ public class PluginDescriptor {
 	private String pluginDescription;
     private String pluginClass;
     private Version version;
-    private Version requires;
+    private Expression requires;
     private String provider;
     private List<PluginDependency> dependencies;
 
     public PluginDescriptor() {
-    	requires = Version.ZERO;
-        dependencies = new ArrayList<PluginDependency>();
+    	requires = gte("0.0.0"); // Any
+        dependencies = new ArrayList<>();
     }
 
     /**
@@ -68,7 +73,7 @@ public class PluginDescriptor {
     /**
      * Returns the requires of this plugin.
      */
-    public Version getRequires() {
+    public Expression getRequires() {
         return requires;
     }
 
@@ -115,7 +120,12 @@ public class PluginDescriptor {
         this.provider = provider;
     }
 
-    void setRequires(Version requires) {
+    void setRequires(String requires) {
+        Parser<Expression> parser = ExpressionParser.newInstance();
+        this.requires = parser.parse(requires);
+    }
+
+    void setRequires(Expression requires) {
         this.requires = requires;
     }
 
@@ -125,7 +135,7 @@ public class PluginDescriptor {
     		if (dependencies.isEmpty()) {
     			this.dependencies = Collections.emptyList();
     		} else {
-	    		this.dependencies = new ArrayList<PluginDependency>();
+	    		this.dependencies = new ArrayList<>();
 	    		String[] tokens = dependencies.split(",");
 	    		for (String dependency : tokens) {
 	    			dependency = dependency.trim();

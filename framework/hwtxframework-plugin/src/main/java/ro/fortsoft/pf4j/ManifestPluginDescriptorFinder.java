@@ -12,7 +12,7 @@
  */
 package ro.fortsoft.pf4j;
 
-import com.hwtx.plugin.DefaultPlugin;
+import com.github.zafarkhaja.semver.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.fortsoft.pf4j.util.StringUtils;
@@ -31,16 +31,25 @@ import java.util.jar.Manifest;
  */
 public class ManifestPluginDescriptorFinder implements PluginDescriptorFinder {
 
-    private static final Logger log = LoggerFactory.getLogger(ManifestPluginDescriptorFinder.class);
+	private static final Logger log = LoggerFactory.getLogger(ManifestPluginDescriptorFinder.class);
 
-    private PluginClasspath pluginClasspath;
+	private PluginClasspath pluginClasspath;
 
-    public ManifestPluginDescriptorFinder(PluginClasspath pluginClasspath) {
-        this.pluginClasspath = pluginClasspath;
-    }
+	public ManifestPluginDescriptorFinder(PluginClasspath pluginClasspath) {
+		this.pluginClasspath = pluginClasspath;
+	}
 
-    @Override
-    public PluginDescriptor find(File pluginRepository) throws PluginException {
+	@Override
+	public PluginDescriptor find(File pluginRepository) throws PluginException {
+        Manifest manifest = readManifest(pluginRepository);
+
+        PluginDescriptor pluginDescriptor = createPluginDescriptor(manifest);
+        validatePluginDescriptor(pluginDescriptor);
+
+		return pluginDescriptor;
+	}
+
+    protected Manifest readManifest(File pluginRepository) throws PluginException {
         // TODO it's ok with first classes directory? Another idea is to specify in PluginClasspath the folder.
         String classes = pluginClasspath.getClassesDirectories().get(0);
         File manifestFile = new File(pluginRepository, classes + "/META-INF/MANIFEST.MF");
@@ -69,46 +78,55 @@ public class ManifestPluginDescriptorFinder implements PluginDescriptorFinder {
             }
         }
 
+        return manifest;
+    }
+
+    protected PluginDescriptor createPluginDescriptor(Manifest manifest) {
         PluginDescriptor pluginDescriptor = new PluginDescriptor();
 
         // TODO validate !!!
-        Attributes attrs = manifest.getMainAttributes();
-        String id = attrs.getValue("Plugin-Id");
-        if (StringUtils.isEmpty(id)) {
-            throw new PluginException("Plugin-Id cannot be empty");
-        }
+        Attributes attributes = manifest.getMainAttributes();
+        String id = attributes.getValue("Plugin-Id");
         pluginDescriptor.setPluginId(id);
 
-        String description = attrs.getValue("Plugin-Description");
+        String description = attributes.getValue("Plugin-Description");
         if (StringUtils.isEmpty(description)) {
             pluginDescriptor.setPluginDescription("");
         } else {
             pluginDescriptor.setPluginDescription(description);
         }
 
-        String clazz = attrs.getValue("Plugin-Class");
-        if (StringUtils.isEmpty(clazz)) {
-            clazz = DefaultPlugin.class.getName();
-        }
+        String clazz = attributes.getValue("Plugin-Class");
         pluginDescriptor.setPluginClass(clazz);
 
-        String version = attrs.getValue("Plugin-Version");
-        if (StringUtils.isEmpty(version)) {
-            throw new PluginException("Plugin-Version cannot be empty");
+        String version = attributes.getValue("Plugin-Version");
+        if (StringUtils.isNotEmpty(version)) {
+            pluginDescriptor.setPluginVersion(Version.valueOf(version));
         }
-        pluginDescriptor.setPluginVersion(Version.createVersion(version));
 
-        String provider = attrs.getValue("Plugin-Provider");
+        String provider = attributes.getValue("Plugin-Provider");
         pluginDescriptor.setProvider(provider);
-        String dependencies = attrs.getValue("Plugin-Dependencies");
+        String dependencies = attributes.getValue("Plugin-Dependencies");
         pluginDescriptor.setDependencies(dependencies);
 
-        String requires = attrs.getValue("Plugin-Requires");
+        String requires = attributes.getValue("Plugin-Requires");
         if (StringUtils.isNotEmpty(requires)) {
-            pluginDescriptor.setRequires(Version.createVersion(requires));
+            pluginDescriptor.setRequires(requires);
         }
 
         return pluginDescriptor;
+    }
+
+    protected void validatePluginDescriptor(PluginDescriptor pluginDescriptor) throws PluginException {
+        if (StringUtils.isEmpty(pluginDescriptor.getPluginId())) {
+            throw new PluginException("Plugin-Id cannot be empty");
+        }
+        if (StringUtils.isEmpty(pluginDescriptor.getPluginClass())) {
+            throw new PluginException("Plugin-Class cannot be empty");
+        }
+        if (pluginDescriptor.getVersion() == null) {
+            throw new PluginException("Plugin-Version cannot be empty");
+        }
     }
 
 }

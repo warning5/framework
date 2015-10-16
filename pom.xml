@@ -9,7 +9,7 @@
     <version>0.1</version>
     <modules>
         <module>framework</module>
-      <!--  <module>app</module>-->
+        <module>app</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -12,10 +12,14 @@
  */
 package ro.fortsoft.pf4j.util;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,10 +29,10 @@ public class FileUtils {
 
 	public static List<String> readLines(File file, boolean ignoreComments) throws IOException {
 		if (!file.exists() || !file.isFile()) {
-			return Collections.emptyList();
+			return new ArrayList<>();
 		}
 
-		List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<>();
 
 		BufferedReader reader = null;
 		try {
@@ -54,7 +58,7 @@ public class FileUtils {
             writer = new BufferedWriter(new FileWriter(file));
             for (String line : lines) {
                 writer.write(line);
-                writer.write('\n');
+                writer.newLine();
             }
         } finally {
             if (writer != null) {
@@ -87,4 +91,5 @@ public class FileUtils {
 
 		return success;
 	}
+
 }
